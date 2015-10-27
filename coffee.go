@@ -5,17 +5,18 @@ import (
   "strconv"
 )
 
-func PadHasBeenPressed(boisson string, numberOfSugar int) string {
-  beverageCode := ""
-  if "Chocolate" == boisson {
-    beverageCode = "H"
-  }
-  if "Coffee" == boisson {
-    beverageCode = "C"
-  }
-  if "Tea" == boisson {
-    beverageCode = "T"
-  }
+func getBeverages() (map[string]string) {
+  var beverages map[string]string
+  beverages = make(map[string]string)
+  beverages["Chocolate"] = "H"
+  beverages["Coffee"] = "C"
+  beverages["Tea"] = "T"
+  return beverages
+}
+
+func PadHasBeenPressed(beverage string, numberOfSugar int) string {
+  beverages := getBeverages()
+  beverageCode := beverages[beverage]
   touillette := ""
   sugarCode := ""
   if (numberOfSugar > 0) {
