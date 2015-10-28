@@ -5,18 +5,26 @@ import (
   "strconv"
 )
 
-func getBeverages() (map[string]string) {
-  var beverages map[string]string
-  beverages = make(map[string]string)
-  beverages["Chocolate"] = "H"
-  beverages["Coffee"] = "C"
-  beverages["Tea"] = "T"
+type Order struct {
+  Code string
+  Price int
+}
+
+func getBeverages() (map[string]Order) {
+  var beverages map[string]Order
+  beverages = make(map[string]Order)
+  beverages["Chocolate"] = Order{"H",50}
+  beverages["Coffee"] = Order{"C",60}
+  beverages["Tea"] = Order{"T",40}
   return beverages
 }
 
-func PadHasBeenPressed(beverage string, numberOfSugar int) string {
-  beverages := getBeverages()
-  beverageCode := beverages[beverage]
+func PadHasBeenPressed(beverageString string, numberOfSugar int, money int) string {
+  beverage := getBeverages()[beverageString]
+  difference := beverage.Price - money
+  if (difference > 0) {
+    return fmt.Sprintf("M: Missing %dc", difference)
+  }
   touillette := ""
   sugarCode := ""
   if (numberOfSugar > 0) {
@@ -26,5 +34,5 @@ func PadHasBeenPressed(beverage string, numberOfSugar int) string {
     touillette = "0"
     sugarCode =  strconv.Itoa(numberOfSugar)
   }
-  return fmt.Sprintf("%s:%s:%s", beverageCode, sugarCode, touillette)
+  return fmt.Sprintf("%s:%s:%s", beverage.Code, sugarCode, touillette)
 }
