@@ -23,22 +23,31 @@ func getBeverages() (map[string]Order) {
 
 func PadHasBeenPressed(beverageString string, numberOfSugar int, money int, extraHotRequest bool) string {
   beverage := getBeverages()[beverageString]
+  
   difference := beverage.Price - money
   if (difference > 0) {
     return fmt.Sprintf("M: Missing %dc", difference)
   }
-  extraHot := ""
-  touillette := ""
-  sugarCode := ""
+
+  extraHot := handleExtraHot(beverage, extraHotRequest)
+  sugarCode, touillette := handleSugarAndTouillette(beverage, numberOfSugar)
+
+  return fmt.Sprintf("%s%s:%s:%s", beverage.Code, extraHot, sugarCode, touillette)
+}
+
+func handleSugarAndTouillette(beverage Order, numberOfSugar int) (string, string) {
   if (numberOfSugar > 0) {
     if (numberOfSugar > 2) {
       numberOfSugar = 2
     }
-    touillette = "0"
-    sugarCode =  strconv.Itoa(numberOfSugar)
+    return strconv.Itoa(numberOfSugar), "0"
   }
+  return "",""
+}
+
+func handleExtraHot(beverage Order, extraHotRequest bool) string {
   if (extraHotRequest && beverage.IsExtraHot) {
-    extraHot = "h"
+    return "h"
   }
-  return fmt.Sprintf("%s%s:%s:%s", beverage.Code, extraHot, sugarCode, touillette)
+  return ""
 }
