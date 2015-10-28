@@ -11,18 +11,20 @@ type Beverage struct {
   IsExtraHot bool
 }
 
-func getBeverages() (map[string]Beverage) {
-  var beverages map[string]Beverage
-  beverages = make(map[string]Beverage)
-  beverages["Chocolate"] = Beverage{"H",50, true}
-  beverages["Coffee"] = Beverage{"C",60, true}
-  beverages["Tea"] = Beverage{"T",40, true}
-  beverages["Orange"] = Beverage{"O",60, false}
-  return beverages
+var beverages = initBeverages()
+
+func initBeverages() (map[string]Beverage) {
+  var beveragesMap map[string]Beverage
+  beveragesMap = make(map[string]Beverage)
+  beveragesMap["Chocolate"] = Beverage{"H",50, true}
+  beveragesMap["Coffee"] = Beverage{"C",60, true}
+  beveragesMap["Tea"] = Beverage{"T",40, true}
+  beveragesMap["Orange"] = Beverage{"O",60, false}
+  return beveragesMap
 }
 
 func PadHasBeenPressed(beverageString string, numberOfSugar int, money int, extraHotRequest bool) string {
-  beverage := getBeverages()[beverageString]
+  beverage := beverages[beverageString]
 
   difference := beverage.Price - money
   if (difference > 0) {
