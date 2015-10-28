@@ -3,6 +3,7 @@ package main
 import (
   "fmt"
   "testing"
+  "strings"
 )
 
 func TestOrderAChocolate(t *testing.T) {
@@ -65,8 +66,39 @@ func TestOrderAnExtraHotOrange(t *testing.T) {
   equals(PadHasBeenPressed("Orange", 0, 100, true),"O::", t)
 }
 
+func TestPrintReport(t *testing.T) {
+  Reset()
+  PadHasBeenPressed("Orange", 0, 100, false)
+  PadHasBeenPressed("Orange", 0, 100, false)
+  PadHasBeenPressed("Orange", 0, 100, false)
+  PadHasBeenPressed("Tea", 0, 100, false)
+  PadHasBeenPressed("Tea", 0, 100, false)
+  PadHasBeenPressed("Coffee", 0, 100, false)
+  startsWith(printReport(),"Chocolate: 0, Coffee: 1, Orange: 3, Tea: 2", t)
+}
+
+func TestPrintReportWithMoney(t *testing.T) {
+  Reset()
+  PadHasBeenPressed("Orange", 0, 100, false)
+  PadHasBeenPressed("Tea", 0, 100, false)
+  PadHasBeenPressed("Coffee", 0, 100, false)
+  endsWith(printReport(),"Money: 160", t)
+}
+
+func endsWith(value string, expected string, t *testing.T) {
+  if !strings.HasSuffix(value, expected) {
+    t.Error(fmt.Sprintf("Expected that [%s] ends with [%s]", value, expected))
+  }
+}
+
+func startsWith(value string, expected string, t *testing.T) {
+  if !strings.HasPrefix(value, expected) {
+    t.Error(fmt.Sprintf("Expected that [%s] starts with [%s]", value, expected))
+  }
+}
+
 func equals(value string, expected string, t *testing.T) {
   if value != expected {
-    t.Error(fmt.Sprintf("expected [%s] is not equal to [%s]", expected, value))
+    t.Error(fmt.Sprintf("Expected [%s] to equal [%s]", value, expected))
   }
 }
