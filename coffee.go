@@ -7,6 +7,11 @@ import (
   "sort"
 )
 
+type Machine struct {
+  Email EmailNotifier
+  Checker BeverageQuantityChecker
+}
+
 type Beverages struct {
   Sum int
   List map[string]*Beverage
@@ -43,13 +48,18 @@ func (b *Beverage) Record() {
 }
 
 var beverages = new(Beverages)
+var coffeeMachine = Machine{DefaultEmailNotifier{},DefaultBeverageQuantityChecker{}}
 
 func PadHasBeenPressed(beverageString string, numberOfSugar int, money int, extraHotRequest bool) string {
   beverage := beverages.Get(beverageString)
 
   difference := beverage.Price - money
-  if (difference > 0) {
+  if difference > 0 {
     return fmt.Sprintf("M: Missing %dc", difference)
+  }
+  if coffeeMachine.Checker.IsEmpty(beverageString) {
+    coffeeMachine.Email.NotifyMissingDrink(beverageString)
+    return fmt.Sprintf("M: we have a shortage of %s.", beverageString)
   }
 
   beverages.Record(beverage)
@@ -85,4 +95,22 @@ func handleExtraHot(beverage Beverage, extraHotRequest bool) string {
     return "h"
   }
   return ""
+}
+
+type DefaultEmailNotifier struct {}
+
+func (e DefaultEmailNotifier) NotifyMissingDrink(drink string) {}
+
+type DefaultBeverageQuantityChecker struct {}
+
+func (e DefaultBeverageQuantityChecker) IsEmpty(drink string) bool {
+  return false
+}
+
+type EmailNotifier interface {
+   NotifyMissingDrink(drink string)
+}
+
+type BeverageQuantityChecker interface {
+  IsEmpty(drink string) bool
 }

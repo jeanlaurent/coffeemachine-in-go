@@ -99,6 +99,26 @@ func TestPrintReportWithMoney(t *testing.T) {
   endsWith(printReport(),"Money: 160", t)
 }
 
+var called = ""
+type EmailNotifierMock struct {}
+type BeverageQuantityCheckerMock struct {}
+
+func (b BeverageQuantityCheckerMock) IsEmpty(drink string) bool {
+  return true
+}
+
+func (m EmailNotifierMock) NotifyMissingDrink(drink string) {
+  called = drink
+}
+
+func TestShortageOfCoffee(t *testing.T) {
+  beverages.Init()
+  coffeeMachine.Email = EmailNotifierMock{}
+  coffeeMachine.Checker = BeverageQuantityCheckerMock{}
+  equals(PadHasBeenPressed("Orange", 0, 100, true),"M: we have a shortage of Orange.", t)
+  equals(called,"Orange", t)
+}
+
 func endsWith(value string, expected string, t *testing.T) {
   if !strings.HasSuffix(value, expected) {
     t.Error(fmt.Sprintf("Expected that [%s] ends with [%s]", value, expected))
