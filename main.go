@@ -7,48 +7,7 @@ import (
   "sort"
 )
 
-type Machine struct {
-  Email EmailNotifier
-  Checker BeverageQuantityChecker
-}
-
-type Beverages struct {
-  Sum int
-  List map[string]*Beverage
-}
-
-func (b *Beverages) Record(beverage *Beverage) {
-  beverage.Record()
-  b.Sum += beverage.Price
-}
-
-func (b *Beverages) Get(name string) *Beverage{
-    return b.List[name]
-}
-
-func (b *Beverages) Init() {
-  b.Sum = 0
-  b.List = make(map[string]*Beverage)
-  b.List["Chocolate"] = &Beverage{"H",50, true, 0, "Chocolate"}
-  b.List["Coffee"] = &Beverage{"C",60, true, 0, "Coffee"}
-  b.List["Tea"] = &Beverage{"T",40, true, 0, "Tea"}
-  b.List["Orange"] = &Beverage{"O",60, false, 0, "Orange"}
-}
-
-type Beverage struct {
-  Code string
-  Price int
-  IsExtraHot bool
-  Count int
-  Name string
-}
-
-func (b *Beverage) Record() {
-  b.Count++
-}
-
 var beverages = new(Beverages)
-var coffeeMachine = Machine{DefaultEmailNotifier{},DefaultBeverageQuantityChecker{}}
 
 func PadHasBeenPressed(beverageString string, numberOfSugar int, money int, extraHotRequest bool) string {
   beverage := beverages.Get(beverageString)
@@ -57,8 +16,8 @@ func PadHasBeenPressed(beverageString string, numberOfSugar int, money int, extr
   if difference > 0 {
     return fmt.Sprintf("M: Missing %dc", difference)
   }
-  if coffeeMachine.Checker.IsEmpty(beverageString) {
-    coffeeMachine.Email.NotifyMissingDrink(beverageString)
+  if beverages.machine.IsEmpty(beverageString) {
+    beverages.machine.NotifyMissingDrink(beverageString)
     return fmt.Sprintf("M: we have a shortage of %s.", beverageString)
   }
 
@@ -95,22 +54,4 @@ func handleExtraHot(beverage Beverage, extraHotRequest bool) string {
     return "h"
   }
   return ""
-}
-
-type DefaultEmailNotifier struct {}
-
-func (e DefaultEmailNotifier) NotifyMissingDrink(drink string) {}
-
-type DefaultBeverageQuantityChecker struct {}
-
-func (e DefaultBeverageQuantityChecker) IsEmpty(drink string) bool {
-  return false
-}
-
-type EmailNotifier interface {
-   NotifyMissingDrink(drink string)
-}
-
-type BeverageQuantityChecker interface {
-  IsEmpty(drink string) bool
 }

@@ -99,22 +99,20 @@ func TestPrintReportWithMoney(t *testing.T) {
   endsWith(printReport(),"Money: 160", t)
 }
 
-var called = ""
 type EmailNotifierMock struct {}
 type BeverageQuantityCheckerMock struct {}
 
-func (b BeverageQuantityCheckerMock) IsEmpty(drink string) bool {
-  return true
-}
+var called = ""
 
-func (m EmailNotifierMock) NotifyMissingDrink(drink string) {
-  called = drink
-}
+type MachineMock struct { }
+
+func (m MachineMock) IsEmpty(drink string) bool { return true }
+
+func (m MachineMock) NotifyMissingDrink(drink string) {called = drink }
 
 func TestShortageOfCoffee(t *testing.T) {
   beverages.Init()
-  coffeeMachine.Email = EmailNotifierMock{}
-  coffeeMachine.Checker = BeverageQuantityCheckerMock{}
+  beverages.machine = MachineMock{}
   equals(PadHasBeenPressed("Orange", 0, 100, true),"M: we have a shortage of Orange.", t)
   equals(called,"Orange", t)
 }
