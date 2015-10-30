@@ -102,19 +102,19 @@ func TestPrintReportWithMoney(t *testing.T) {
 type EmailNotifierMock struct {}
 type BeverageQuantityCheckerMock struct {}
 
-var called = ""
+type MachineMock struct {
+	called string
+}
 
-type MachineMock struct { }
+func (m *MachineMock) IsEmpty(drink string) bool { return true }
 
-func (m MachineMock) IsEmpty(drink string) bool { return true }
-
-func (m MachineMock) NotifyMissingDrink(drink string) {called = drink }
+func (m *MachineMock) NotifyMissingDrink(drink string) { m.called = drink }
 
 func TestShortageOfCoffee(t *testing.T) {
-  beverages.Init()
-  beverages.machine = MachineMock{}
-  equals(PadHasBeenPressed("Orange", 0, 100, true),"M: we have a shortage of Orange.", t)
-  equals(called,"Orange", t)
+	beverages.Init()
+	beverages.machine = &MachineMock{}
+	equals(PadHasBeenPressed("Orange", 0, 100, true), "M: we have a shortage of Orange.", t)
+	equals(beverages.machine.(*MachineMock).called, "Orange", t)
 }
 
 func endsWith(value string, expected string, t *testing.T) {
