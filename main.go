@@ -55,3 +55,7 @@ func handleExtraHot(beverage Beverage, extraHotRequest bool) string {
   }
   return ""
 }
+
+func main() {
+	fmt.Println("Nothing to see here, move along, run test instead")
+}
